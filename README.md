@@ -47,7 +47,6 @@ src/kimm_phri_panda_husky/python/
   offline_cm_builder.py
   figure2_seed_comparison.py
 ```
-- [코드 근거 정리](docs/meetings/2026-05-12/code_evidence.md)
   
 ## 현재 한계
 
