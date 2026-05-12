@@ -51,21 +51,10 @@ roslaunch kimm_phri_panda_husky coop_transport_grasp_lift_verify.launch \
   follower_controller_log_output:=/tmp/mm_verify_logs/hold_lift_follower.csv
 ```
 
-## 3. Pinocchio smoke test
 
-Panda arm URDF가 Pinocchio에서 로드되고 FK/Jacobian/manipulability 계산이 가능한지 확인합니다.
-
-```bash
-python3 src/kimm_phri_panda_husky/python/pinocchio_panda_smoke_test.py \
-  --urdf /home/ryoo/mmcm_ws/src/kimm_robots_description/franka_panda_description/robots/panda_arm_hand_l.urdf \
-  --output /tmp/mm_verify_logs/pinocchio_left_smoke.txt
-
-python3 src/kimm_phri_panda_husky/python/pinocchio_panda_smoke_test.py \
-  --urdf /home/ryoo/mmcm_ws/src/kimm_robots_description/franka_panda_description/robots/panda_arm_hand_r.urdf \
-  --output /tmp/mm_verify_logs/pinocchio_right_smoke.txt
 ```
 
-## 4. Figure 2 seed 비교
+## 3. Figure 2 seed 비교
 
 baseline seed와 CM-like seed의 초기 자세 비교 그림을 생성합니다.
 
