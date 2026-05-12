@@ -1,14 +1,3 @@
-
-
-https://github.com/user-attachments/assets/559327f4-ee5c-4952-bcbe-b52dec5e30c0
-
-
-
-
-
-
-
-
 # hanmin_2026ICROS
 
 ICROS2026 논문 구현을 위한 협동운반 시뮬레이션 진행 기록입니다.
