@@ -1,0 +1,48 @@
+<launch>
+  <arg name="start_scene" default="true"/>
+  <arg name="auto_start_sim" default="true"/>
+  <arg name="sim_start_delay" default="5.0"/>
+
+  <arg name="hold_rate" default="200.0"/>
+  <arg name="log_rate" default="20.0"/>
+  <arg name="duration" default="8.0"/>
+  <arg name="scene_log_output" default="/tmp/mm_verify_logs/coop_hold_scene_state.csv"/>
+
+  <arg name="kp_wheel" default="20.0"/>
+  <arg name="kd_wheel" default="5.0"/>
+  <arg name="limit_wheel" default="20.0"/>
+  <arg name="kp_arm" default="0.0"/>
+  <arg name="kd_arm" default="0.0"/>
+  <arg name="limit_arm" default="5.0"/>
+  <arg name="kp_finger" default="0.0"/>
+  <arg name="kd_finger" default="0.2"/>
+  <arg name="limit_finger" default="5.0"/>
+
+  <include if="$(arg start_scene)" file="$(find kimm_phri_panda_husky)/launch/coop_transport_scene.launch"/>
+
+  <node if="$(arg auto_start_sim)" name="coop_sim_run_once"
+        pkg="kimm_phri_panda_husky" type="coop_sim_run_once.py" output="screen">
+    <param name="delay" value="$(arg sim_start_delay)"/>
+  </node>
+
+  <node name="dual_scene_hold_controller"
+        pkg="kimm_phri_panda_husky" type="dual_scene_hold_controller.py" output="screen">
+    <param name="rate" value="$(arg hold_rate)"/>
+    <param name="kp_wheel" value="$(arg kp_wheel)"/>
+    <param name="kd_wheel" value="$(arg kd_wheel)"/>
+    <param name="limit_wheel" value="$(arg limit_wheel)"/>
+    <param name="kp_arm" value="$(arg kp_arm)"/>
+    <param name="kd_arm" value="$(arg kd_arm)"/>
+    <param name="limit_arm" value="$(arg limit_arm)"/>
+    <param name="kp_finger" value="$(arg kp_finger)"/>
+    <param name="kd_finger" value="$(arg kd_finger)"/>
+    <param name="limit_finger" value="$(arg limit_finger)"/>
+  </node>
+
+  <node name="coop_scene_state_logger"
+        pkg="kimm_phri_panda_husky" type="coop_scene_state_logger.py" output="screen">
+    <param name="rate" value="$(arg log_rate)"/>
+    <param name="duration" value="$(arg duration)"/>
+    <param name="output" value="$(arg scene_log_output)"/>
+  </node>
+</launch>

@@ -1,0 +1,140 @@
+<mujoco model="coop_transport_scene">
+    <option timestep="0.002" iterations="20" noslip_iterations="8" tolerance="1e-6" />
+    <size njmax="5000" nconmax="1500" />
+
+    <include file="../robots/l_husky_with_panda_hand.xml" />
+    <include file="../robots/r_husky_with_panda_hand.xml" />
+
+    <asset>
+        <texture name="coop_floor_tex" type="2d" builtin="checker" rgb1="0.25 0.28 0.30" rgb2="0.16 0.18 0.20" width="100" height="100" />
+        <material name="coop_floor_material" texture="coop_floor_tex" texuniform="true" />
+        <material name="corridor_wall_material" rgba="0.45 0.47 0.50 1" />
+        <material name="obstacle_material" rgba="0.72 0.18 0.12 1" />
+        <material name="low_ceiling_material" rgba="0.55 0.34 0.16 1" />
+        <material name="object_material" rgba="0.18 0.44 0.86 1" />
+        <material name="grasp_tab_material" rgba="0.03 0.72 0.42 1" />
+        <material name="grasp_marker_material" rgba="0.05 0.85 0.35 1" />
+        <material name="goal_marker_material" rgba="0.10 0.70 0.20 0.35" />
+    </asset>
+
+    <visual>
+        <map force="0.1" />
+    </visual>
+
+    <default>
+        <default class="viz">
+            <geom contype="0" conaffinity="0" group="1" type="mesh" rgba=".6 .6 .7 1" />
+        </default>
+        <default class="cls">
+            <geom group="2" rgba="0.79216 0.81961 0.93333 0.5" />
+        </default>
+        <default class="coop_static">
+            <geom type="box" contype="1" conaffinity="1" condim="3" friction="1.0 0.05 0.001" />
+        </default>
+        <default class="arm_collision">
+            <geom type="capsule" contype="2" conaffinity="0" condim="3" friction="0.8 0.02 0.001" rgba="0.65 0.10 0.75 0.18" group="3" />
+        </default>
+        <default class="coop_visual">
+            <geom contype="0" conaffinity="0" group="1" />
+        </default>
+    </default>
+
+    <worldbody>
+        <geom name="ground" type="plane" size="24.0 16.0 1" pos="0 0 -0.25" material="coop_floor_material" condim="3" friction="1.0 0.05 0.001" />
+
+        <light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="5 5 10" dir="-1 -1 -3" />
+        <light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="5 -5 10" dir="-1 1 -3" />
+        <light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="-7 0 10" dir="1 0 -3" />
+        <camera name="object_closeup" mode="targetbody" target="transport_object" pos="-6.40 -2.40 1.35" fovy="28" />
+        <camera name="leader_gripper_closeup" mode="targetbody" target="leader_object_grasp_frame" pos="-7.00 1.70 1.25" fovy="24" />
+        <camera name="follower_gripper_closeup" mode="targetbody" target="follower_object_grasp_frame" pos="-6.95 -1.70 1.25" fovy="24" />
+        <camera name="side_grasp_view" mode="targetbody" target="transport_object" pos="-8.30 0.00 1.25" fovy="30" />
+
+        
+        <body name="wall_left_straight" pos="-7.75 2.50 0.25">
+            <geom class="coop_static" name="wall_left_straight_geom" size="3.75 0.08 0.50" material="corridor_wall_material" />
+        </body>
+        <body name="wall_right_straight" pos="-7.75 -2.50 0.25">
+            <geom class="coop_static" name="wall_right_straight_geom" size="3.75 0.08 0.50" material="corridor_wall_material" />
+        </body>
+
+        
+        <body name="funnel_left_diagonal" pos="-1.00 1.925 0.25">
+            <geom class="coop_static" name="funnel_left_diagonal_geom" size="3.06 0.08 0.50" quat="0.9955 0 0 -0.0946" material="corridor_wall_material" />
+        </body>
+        <body name="funnel_right_straight" pos="-1.00 -2.50 0.25">
+            <geom class="coop_static" name="funnel_right_straight_geom" size="3.00 0.08 0.50" material="corridor_wall_material" />
+        </body>
+
+        
+        <body name="narrow_gate_left" pos="2.70 1.35 0.25">
+            <geom class="coop_static" name="narrow_gate_left_geom" size="0.70 0.08 0.50" material="obstacle_material" />
+        </body>
+        <body name="narrow_gate_right" pos="2.70 -2.50 0.25">
+            <geom class="coop_static" name="narrow_gate_right_geom" size="0.70 0.08 0.50" material="obstacle_material" />
+        </body>
+
+        
+        <body name="turn_wall_outer" pos="7.20 3.35 0.25">
+            <geom class="coop_static" name="turn_wall_outer_geom" size="0.08 2.40 0.50" material="corridor_wall_material" />
+        </body>
+        <body name="turn_wall_inner" pos="5.40 -3.35 0.25">
+            <geom class="coop_static" name="turn_wall_inner_geom" size="2.50 0.08 0.50" material="corridor_wall_material" />
+        </body>
+        <body name="route_obstacle" pos="6.10 0.35 0.35">
+            <geom class="coop_static" name="route_obstacle_geom" size="0.35 0.45 0.70" material="obstacle_material" />
+        </body>
+
+        
+        <body name="low_ceiling_panel" pos="5.05 0.10 1.08">
+            <geom class="coop_static" name="low_ceiling_panel_geom" size="1.35 1.35 0.10" conaffinity="3" material="low_ceiling_material" />
+        </body>
+        <body name="low_ceiling_left_post" pos="3.70 1.55 0.45">
+            <geom class="coop_static" name="low_ceiling_left_post_geom" size="0.08 0.08 0.70" conaffinity="3" material="low_ceiling_material" />
+        </body>
+        <body name="low_ceiling_right_post" pos="3.70 -1.35 0.45">
+            <geom class="coop_static" name="low_ceiling_right_post_geom" size="0.08 0.08 0.70" conaffinity="3" material="low_ceiling_material" />
+        </body>
+        <body name="low_ceiling_back_left_post" pos="6.40 1.55 0.45">
+            <geom class="coop_static" name="low_ceiling_back_left_post_geom" size="0.08 0.08 0.70" conaffinity="3" material="low_ceiling_material" />
+        </body>
+        <body name="low_ceiling_back_right_post" pos="6.40 -1.35 0.45">
+            <geom class="coop_static" name="low_ceiling_back_right_post_geom" size="0.08 0.08 0.70" conaffinity="3" material="low_ceiling_material" />
+        </body>
+        <geom class="coop_visual" name="low_ceiling_avoid_marker" type="box" pos="5.05 0.10 0.015" size="1.50 1.50 0.01" rgba="0.85 0.45 0.05 0.30" />
+
+        
+        <geom class="coop_visual" name="start_marker" type="box" pos="-7.00 0 0.01" size="1.10 2.30 0.01" rgba="0.10 0.45 0.85 0.30" />
+        <geom class="coop_visual" name="goal_marker" type="box" pos="8.70 1.90 0.01" size="1.40 1.90 0.01" material="goal_marker_material" />
+
+        
+        <body name="transport_object" pos="-6.45 0 0.806">
+            <freejoint name="transport_object_root" />
+            <inertial pos="0 0 0" mass="4.0" diaginertia="0.965 0.855 1.815" />
+            <geom name="transport_object_collision" type="box" size="0.80 0.85 0.025" material="object_material" contype="1" conaffinity="1" condim="3" friction="1.0 0.05 0.001" />
+            <geom class="coop_visual" name="transport_object_visual" type="box" size="0.80 0.85 0.025" material="object_material" />
+            
+            <geom name="leader_grasp_tab_collision" type="box" pos="0 0.86 0" size="0.10 0.020 0.055" material="grasp_tab_material" contype="1" conaffinity="1" condim="3" friction="1.5 0.05 0.001" />
+            <geom name="follower_grasp_tab_collision" type="box" pos="0 -0.86 0" size="0.10 0.020 0.055" material="grasp_tab_material" contype="1" conaffinity="1" condim="3" friction="1.5 0.05 0.001" />
+            <geom class="coop_visual" name="leader_grasp_marker" type="box" pos="0 0.85 0" size="0.115 0.010 0.065" material="grasp_marker_material" />
+            <geom class="coop_visual" name="follower_grasp_marker" type="box" pos="0 -0.85 0" size="0.115 0.010 0.065" material="grasp_marker_material" />
+            <body name="leader_object_grasp_frame" pos="0 0.85 0">
+                <site name="leader_object_grasp_site" pos="0 0 0" size="0.04" rgba="0.05 0.85 0.35 1" />
+            </body>
+            <body name="follower_object_grasp_frame" pos="0 -0.85 0">
+                <site name="follower_object_grasp_site" pos="0 0 0" size="0.04" rgba="0.05 0.85 0.35 1" />
+            </body>
+        </body>
+    </worldbody>
+
+    
+    <equality>
+        <weld name="object_to_leader_ee_fixed" body1="leader_object_grasp_frame" body2="l_ee_grasp_frame" active="true" relpose="0 0 0 1 0 0 0" solref="0.05 1" solimp="0.90 0.99 0.001" />
+        <weld name="object_to_follower_ee_fixed" body1="follower_object_grasp_frame" body2="r_ee_grasp_frame" active="true" relpose="0 0 0 1 0 0 0" solref="0.05 1" solimp="0.90 0.99 0.001" />
+    </equality>
+
+    <keyframe>
+        
+        <key name="coop_start" time="0" qpos="             -6.97847080614 0.906062745397 -0.117804816204 0.994510720318 8.5236500336e-05 7.47850650045e-05 0.104634670712             0.0855532287497 0.0931091972452 -0.1766861989 0.0961644418282             -0.0424381084146 0.18747649902 -0.361566131806 -0.385313073313 0.055835430123 0.565935379314             -0.0111948773652 0.0193595241452 0.020494761076             -6.9122032659 -0.925879013563 -0.117818665961 0.99382670098 -0.000119719525839 6.51927050026e-05 -0.110943543463             0.494350212176 0.490354622532 0.493556884089 0.271273005128             0.0938909379404 -0.661467153322 0.267638618645 -1.10015499697 0.385990640575 0.400329364492             0.313250651234 0.0210741486513 0.0188843779964             -6.40098837409 0.0389554017566 0.806 0.997602944526 -0.00282534677254 -0.000209928060309 -0.069139991452" />
+    </keyframe>
+</mujoco>

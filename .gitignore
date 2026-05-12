@@ -1,0 +1,33 @@
+# ROS / catkin generated files
+build/
+devel/
+install/
+log/
+logs/
+.catkin_tools/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Runtime logs and large experiment dumps
+*.bag
+*.db3
+*.active
+*.log
+/tmp/
+/outputs/
+/results/raw/
+
+# Editor / OS files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# MuJoCo / local machine files
+*.mjb
+*.stl.cache
+
