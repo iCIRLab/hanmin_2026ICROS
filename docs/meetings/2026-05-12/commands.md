@@ -1,6 +1,6 @@
-# Simulation Commands
+# 실행 명령
 
-Run from:
+모든 명령은 아래 환경 설정 후 실행합니다.
 
 ```bash
 cd /home/ryoo/mmcm_ws
@@ -9,7 +9,9 @@ export PYTHONPATH=/opt/openrobots/lib/python3.8/site-packages:$PYTHONPATH
 export LD_LIBRARY_PATH=/opt/openrobots/lib:$LD_LIBRARY_PATH
 ```
 
-## Base Movement
+## 1. Base movement 검증
+
+두 mobile base가 각각 reference를 따라 움직이고, fixed-weld plate가 함께 이동하는지 확인합니다.
 
 ```bash
 roslaunch kimm_phri_panda_husky coop_transport_dual_base_only_verify.launch \
@@ -24,7 +26,9 @@ roslaunch kimm_phri_panda_husky coop_transport_dual_base_only_verify.launch \
   follower_controller_log_output:=/tmp/mm_verify_logs/watch_to_narrow_follower.csv
 ```
 
-## Fixed-Weld Arm Lift
+## 2. Fixed-weld arm lift 검증
+
+15초 대기 후 plate를 천천히 들어올리고, roslaunch를 끄기 전까지 controller를 유지합니다.
 
 ```bash
 roslaunch kimm_phri_panda_husky coop_transport_grasp_lift_verify.launch \
@@ -47,7 +51,9 @@ roslaunch kimm_phri_panda_husky coop_transport_grasp_lift_verify.launch \
   follower_controller_log_output:=/tmp/mm_verify_logs/hold_lift_follower.csv
 ```
 
-## Pinocchio Smoke Test
+## 3. Pinocchio smoke test
+
+Panda arm URDF가 Pinocchio에서 로드되고 FK/Jacobian/manipulability 계산이 가능한지 확인합니다.
 
 ```bash
 python3 src/kimm_phri_panda_husky/python/pinocchio_panda_smoke_test.py \
@@ -59,7 +65,9 @@ python3 src/kimm_phri_panda_husky/python/pinocchio_panda_smoke_test.py \
   --output /tmp/mm_verify_logs/pinocchio_right_smoke.txt
 ```
 
-## Figure 2 Seed Comparison
+## 4. Figure 2 seed 비교
+
+baseline seed와 CM-like seed의 초기 자세 비교 그림을 생성합니다.
 
 ```bash
 python3 src/kimm_phri_panda_husky/python/offline_cm_builder.py \

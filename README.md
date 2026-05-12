@@ -1,44 +1,72 @@
 # hanmin_2026ICROS
 
-ICROS2026 cooperative transportation simulation progress repository.
+ICROS2026 논문 구현을 위한 협동운반 시뮬레이션 진행 기록입니다.
 
-This repository records the current MuJoCo simulation implementation for two Husky-Panda mobile manipulators transporting a fixed-weld plate object.
+두 대의 Husky-Panda mobile manipulator가 MuJoCo 환경에서 하나의 plate object를 함께 운반하는 구조를 구현하고 있습니다. 현재 단계는 최종 제어기 완성이 아니라, dual robot scene, fixed-weld grasp, leader/follower command 구조, base movement, arm lift 검증 기반을 정리한 것입니다.
 
-## Current Scope
+## 현재 구현한 내용
 
-- Dual Husky-Panda MuJoCo scene
-- Fixed-weld rigid plate grasp setup
-- Leader/follower separated command architecture
-- Base-only movement verification
-- Arm lift verification foundation
-- Panda arm URDF / Pinocchio smoke tests
-- Preliminary baseline seed vs CM-like seed comparison tools
+- MuJoCo에서 두 대의 Husky-Panda를 동시에 로드
+- `l_`, `r_` prefix를 이용해 joint/body/actuator 이름 충돌 방지
+- 얇은 plate object를 두 end-effector에 fixed weld로 연결
+- leader/follower controller를 분리
+- `dual_joint_set_merger.py`로 13 + 13 actuator command를 26 actuator command로 병합
+- base-only movement 검증
+- fixed-weld grasp 기반 arm lift 검증
+- Panda arm URDF를 이용한 Pinocchio FK/Jacobian/manipulability 계산 확인
+- baseline seed와 CM-like seed 비교용 예비 pipeline 구성
 
-## Main Directories
+## 영상
+
+| 파일 | 내용 |
+|---|---|
+| [`base_movement.mp4`](docs/meetings/2026-05-12/media/base_movement.mp4) | 두 mobile base가 움직이고 fixed-weld plate가 함께 이동하는 장면 |
+| [`fixed_weld_grasp.mp4`](docs/meetings/2026-05-12/media/fixed_weld_grasp.mp4) | plate가 두 end-effector에 fixed weld로 연결된 장면 |
+| [`arm_lift.mp4`](docs/meetings/2026-05-12/media/arm_lift.mp4) | fixed-weld grasp 상태에서 arm command로 plate 높이를 올리는 검증 |
+
+## 발표 자료
+
+- [2026-05-12 주간 면담 PDF](docs/meetings/2026-05-12/20260512_weekly_meeting.pdf)
+- [실행 명령 정리](docs/meetings/2026-05-12/commands.md)
+- [코드 근거 정리](docs/meetings/2026-05-12/code_evidence.md)
+
+## 주요 코드 위치
 
 ```text
-docs/meetings/2026-05-12/
-  Weekly meeting PDF, run commands, code evidence, and demo videos
+src/kimm_robots_description/husky_description/husky_coop/
+  coop_transport_scene.xml
+  coop_transport_scene_lift_support_on_generated.xml
 
-src/kimm_robots_description/
-  MuJoCo / URDF robot and scene descriptions
+src/kimm_phri_panda_husky/launch/
+  coop_transport_scene.launch
+  coop_transport_dual_base_only_verify.launch
+  coop_transport_grasp_lift_verify.launch
 
-src/kimm_phri_panda_husky/
-  ROS launch files, controllers, reference generators, and CM tools
+src/kimm_phri_panda_husky/python/
+  leader_motion_player.py
+  follower_coop_planner.py
+  leader_base_only_controller.py
+  follower_base_only_separated_controller.py
+  dual_joint_set_merger.py
+  pinocchio_panda_smoke_test.py
+  offline_cm_builder.py
+  figure2_seed_comparison.py
 ```
 
-## Meeting Record
+## 현재 한계
 
-See:
+- 현재 grasp는 실제 contact force grasp가 아니라 fixed weld 기반입니다.
+- base movement는 command pipeline 검증 단계이며, 완성된 cooperative transportation controller는 아닙니다.
+- arm lift는 가능성 검증 단계이며, 안정적인 end-effector tracking은 다음 단계입니다.
+- 현재 CM은 완성된 Zhang-style inverse Capability Map이 아니라, baseline seed와 CM-like seed 비교용 예비 구조입니다.
 
-```text
-docs/meetings/2026-05-12/README.md
-```
+## 다음 단계
 
-## Notes
-
-This is a progress record, not a final cooperative transportation controller.
-
-Current grasp is based on MuJoCo fixed weld constraints, not contact-force grasp.
-The current CM implementation is a local/CM-like seed comparison pipeline and is not yet a full Zhang-style IK-based inverse Capability Map.
+1. end-effector grasp frame과 object grasp frame 재정렬
+2. support-on 상태에서 lift 안정화
+3. lift 후 base 이동 실험
+4. base movement와 arm lift 동시 수행
+5. follower arm end-effector tracking 추가
+6. IK 기반 inverse Capability Map 구현
+7. narrowing corridor 주행 시나리오 검증
 
