@@ -8,9 +8,6 @@ https://github.com/user-attachments/assets/559327f4-ee5c-4952-bcbe-b52dec5e30c0
 
 
 
-https://github.com/user-attachments/assets/c5752b20-a5c3-4817-a8b1-691c5b017ce5
-
-
 
 # hanmin_2026ICROS
 
@@ -34,8 +31,17 @@ ICROS2026 논문 구현을 위한 협동운반 시뮬레이션 진행 기록입�
 
 | 파일 | 내용 |
 |---|---|
+
+https://github.com/user-attachments/assets/559327f4-ee5c-4952-bcbe-b52dec5e30c0
+
 | [`base_movement.mp4`](docs/meetings/2026-05-12/media/base_movement.mp4) | 두 mobile base가 움직이고 fixed-weld plate가 함께 이동하는 장면 |
+
+
+
 | [`fixed_weld_grasp.mp4`](docs/meetings/2026-05-12/media/fixed_weld_grasp.mp4) | plate가 두 end-effector에 fixed weld로 연결된 장면 |
+
+
+
 | [`arm_lift.mp4`](docs/meetings/2026-05-12/media/arm_lift.mp4) | fixed-weld grasp 상태에서 arm command로 plate 높이를 올리는 검증 |
 
 
