@@ -13,8 +13,6 @@ ICROS2026 논문 구현을 위한 협동운반 시뮬레이션 진행 기록입�
 - `dual_joint_set_merger.py`로 13 + 13 actuator command를 26 actuator command로 병합
 - base-only movement 검증
 - fixed-weld grasp 기반 arm lift 검증
-- Panda arm URDF를 이용한 Pinocchio FK/Jacobian/manipulability 계산 확인
-- baseline seed와 CM-like seed 비교용 예비 pipeline 구성
 
 ## 영상
 
