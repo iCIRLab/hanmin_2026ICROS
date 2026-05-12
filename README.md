@@ -24,11 +24,6 @@ ICROS2026 논문 구현을 위한 협동운반 시뮬레이션 진행 기록입�
 | [`fixed_weld_grasp.mp4`](docs/meetings/2026-05-12/media/fixed_weld_grasp.mp4) | plate가 두 end-effector에 fixed weld로 연결된 장면 |
 | [`arm_lift.mp4`](docs/meetings/2026-05-12/media/arm_lift.mp4) | fixed-weld grasp 상태에서 arm command로 plate 높이를 올리는 검증 |
 
-## 발표 자료
-
-- [2026-05-12 주간 면담 PDF](docs/meetings/2026-05-12/20260512_weekly_meeting.pdf)
-- [실행 명령 정리](docs/meetings/2026-05-12/commands.md)
-- [코드 근거 정리](docs/meetings/2026-05-12/code_evidence.md)
 
 ## 주요 코드 위치
 
@@ -52,7 +47,8 @@ src/kimm_phri_panda_husky/python/
   offline_cm_builder.py
   figure2_seed_comparison.py
 ```
-
+- [코드 근거 정리](docs/meetings/2026-05-12/code_evidence.md)
+  
 ## 현재 한계
 
 - 현재 grasp는 실제 contact force grasp가 아니라 fixed weld 기반입니다.
