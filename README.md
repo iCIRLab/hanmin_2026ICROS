@@ -129,36 +129,10 @@ python3 src/kimm_phri_panda_husky/python/offline_cm_builder.py \
   --output /tmp/mm_verify_logs/pinocchio_offline_cm_samples.csv
 ```
 
-### 2. Baseline/CM Seed 비교 그림 생성
-
-```bash
-python3 src/kimm_phri_panda_husky/python/figure2_seed_comparison.py \
-  --cm-samples /tmp/mm_verify_logs/pinocchio_offline_cm_samples.csv \
-  --output-csv /tmp/mm_verify_logs/pinocchio_figure2_seed_comparison.csv \
-  --candidate-csv /tmp/mm_verify_logs/pinocchio_figure2_cm_candidates.csv \
-  --output-dir /tmp/mm_verify_logs \
-  --figure-prefix pinocchio_figure2
-```
-
-### 3. Baseline/CM 단축 비교 실험
-
-```bash
-python3 src/kimm_phri_panda_husky/python/run_baseline_vs_cm_experiment.py \
-  --scenario straight \
-  --duration 3 \
-  --speed 0.01 \
-  --rate 10 \
-  --command-rate 25 \
-  --sim-start-delay 1.0 \
-  --cm-builder-mode pinocchio \
-  --output-dir /tmp/mm_verify_logs/pinocchio_bvc \
-  --timeout 45
-```
 
 ## 현재 범위와 한계
 
 - 현재 물체 파지는 순수 접촉력 기반 grasp가 아닌 fixed-weld 방식입니다.
-- 현재 CM 구현은 FK/Jacobian 기반의 local q-sampling 방식이며, IK 기반 inverse reachability CM은 향후 확장 대상입니다.
 - follower arm의 정밀 end-effector tracking과 완전한 dual Whole-Body HQP 제어는 계속 개발 중입니다.
 - 운반 중 online local CM 재탐색은 현재 범위에 포함되지 않습니다.
 
