@@ -15,9 +15,8 @@
 
 [![전체 시나리오 영상 미리보기](assets/video/video_preview.jpg)](assets/video/2026ICROS_학부연구생_유한민.mp4)
 
-## 저장소 범위
+## 구성
 
-이 저장소에는 두 비교 시나리오를 구현하는 C++ 패키지만 포함합니다. 이전 Python 검증 코드, 사용하지 않는 launch, RViz/RQT 설정, robot mesh와 전체 description 패키지는 포함하지 않습니다.
 
 ```text
 src/kimm_phri_panda_husky/
@@ -137,20 +136,12 @@ roslaunch kimm_phri_panda_husky cm_transport.launch --nodes
 roslaunch kimm_phri_panda_husky home_transport.launch --nodes
 ```
 
-## 시뮬레이션 검증 결과
 
-- Home `c → t → 0`: 0.10 m lift 후 mode 235 phase 0–5 완료
-- CM `c → y → 0`: CM posture 적용 및 0.10 m lift 후 mode 235 phase 0–5 완료
-- 양쪽 13축 command 약 500 Hz 발행 및 NaN/Inf 없음
-- 초기 EE/link7/elbow의 물체 내부 관통 없음
-- MuJoCo 종료 시 clean shutdown 확인
 
 ## 현재 범위와 한계
 
 - `c` 키의 weld attach는 MuJoCo 시뮬레이션 시험용이며 실제 gripper command를 대체하지 않습니다.
 - 현재 CM은 offline 초기 seed이며 운반 중 local CM 재탐색은 포함하지 않습니다.
-- robot model, mesh와 MuJoCo scene은 `husky_description` 외부 의존 패키지에서 관리합니다.
-- 실제 F/T sensor의 힘·토크 방향과 보상 gain은 실제 하드웨어에서 추가 검증해야 합니다.
 
 ## Authors
 
