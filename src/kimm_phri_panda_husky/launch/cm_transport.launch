@@ -1,0 +1,142 @@
+<launch>
+  <!-- ICROS2026 CM 기반 협업 운반 실행.
+       순서: c(test weld attach) -> y(CM lift) -> 0(mode235 transport).
+       weld는 시뮬레이션 시험 backend이며 실제 gripper command 경로를 대체하지 않는다.
+       mode235 주행 waypoint/gain 기본값은 panda_husky_hqp.cpp에서 관리한다. -->
+
+  <arg name="model_file" default="$(find husky_description)/husky_coop/coop_transport_scene_straight_clean_generated.xml"/>
+  <arg name="cm_seed_file" default="$(find kimm_phri_panda_husky)/config/holding_cm_seed_lateral_nullspace.yaml"/>
+  <arg name="start_keyboard" default="true"/>
+  <arg name="hqp_rate" default="500.0"/>
+  <arg name="initial_ctrl_mode" default="200"/>
+  <arg name="attach_request_delay" default="1.0"/>
+  <arg name="apply_cm_posture" default="true"/>
+  <!-- CM scene starts at the selected seed x/yaw with 5 mm outward lateral
+       grasp clearance. Moving welded
+       bases during lift over-constrains the two EE tasks, so runtime base
+       relocation is an explicit experimental override only. -->
+  <arg name="apply_cm_base" default="false"/>
+  <arg name="publish_lift_home_posture" default="false"/>
+  <arg name="fext_source" default="sensor"/>
+  <arg name="leader_enable_fext" default="false"/>
+  <arg name="follower_enable_fext" default="false"/>
+  <arg name="leader_enable_fext_comp" default="false"/>
+  <arg name="follower_enable_fext_comp" default="false"/>
+  <arg name="fext_comp_gain" default="1.0"/>
+  <arg name="fext_timeout" default="0.25"/>
+  <arg name="couple_stiffness" default="100.0"/>
+
+  <group ns="coop_scene">
+    <node name="mujoco_ros" pkg="mujoco_ros" type="mujoco_ros"
+          required="true" respawn="false" output="screen">
+      <param name="license" type="string" value="$(env HOME)/.mujoco/mjkey.txt"/>
+      <param name="pub_mode" value="false"/>
+      <param name="model_file" type="string" value="$(arg model_file)"/>
+    </node>
+  </group>
+
+  <param name="ns1/robot_urdf_path" type="string" value="$(find husky_description)"/>
+  <param name="ns1/robot_urdf" type="string" value="/husky_single/husky_panda_hand.urdf"/>
+  <param name="ns0/robot_urdf_path" type="string" value="$(find husky_description)"/>
+  <param name="ns0/robot_urdf" type="string" value="/husky_single/husky_panda_hand.urdf"/>
+
+  <node name="coop_phri_simul" clear_params="true"
+        pkg="kimm_phri_panda_husky" type="coop_phri_simul" output="screen">
+    <!-- Simulation-only weld attach and sim start -->
+    <param name="attach_request_delay" value="$(arg attach_request_delay)"/>
+    <param name="max_attach_gap" value="0.08"/>
+    <param name="gap_timeout" value="120.0"/>
+    <param name="start_sim_after_attach" value="true"/>
+    <param name="start_sim_on_first_mode" value="true"/>
+
+    <!-- Object 기준 EE target 생성 -->
+    <param name="object_lift_mode" value="238"/>
+    <param name="baseline_lift_mode" value="211"/>
+    <param name="object_lift_delta" value="0.10"/>
+    <param name="lift_level_orientation" value="true"/>
+    <param name="lift_use_canonical_grasp_offsets" value="false"/>
+    <param name="publish_arm_posture_target_during_lift" value="$(arg publish_lift_home_posture)"/>
+    <param name="target_publish_count" value="6"/>
+    <param name="target_publish_period" value="2.0"/>
+    <param name="pregrasp_z_stage_count" value="2"/>
+    <param name="max_target_step" value="0.0"/>
+    <param name="skip_hqp_if_already_within_gap" value="0.005"/>
+    <param name="publish_base_targets" value="false"/>
+    <param name="publish_cm_base_targets" value="$(arg apply_cm_base)"/>
+    <rosparam param="leader_base_target_world_offset_xyz">[0.30, 0.0, 0.0]</rosparam>
+
+    <!-- Leader/follower command merge -->
+    <param name="timeout" value="0.5"/>
+    <!-- MuJoCo model load가 끝나기 전에 26축 명령을 보내는 초기 size mismatch를 방지한다. -->
+    <param name="start_delay" value="2.0"/>
+    <param name="publish_on_command" value="false"/>
+
+    <!-- CM lift readiness and optional keyboard mode -->
+    <param name="enable_keyboard" value="$(arg start_keyboard)"/>
+    <param name="cm_seed_file" value="$(arg cm_seed_file)"/>
+    <param name="cm_lift_ready_topic" value="/coop/cm_lift_settled"/>
+    <param name="ready_topic" value="/coop/cm_lift_settled"/>
+    <param name="cm_transport_ready_topic" value="/coop/cm_lift_ready"/>
+    <param name="lift_mode" value="238"/>
+    <param name="transport_mode" value="235"/>
+    <param name="publish_base_on_lift" value="$(arg apply_cm_base)"/>
+    <!-- mode 238에서만 CM q_sym을 발행한다. mode 211 홈 baseline에는 적용되지 않는다. -->
+    <param name="publish_arm_posture_on_lift" value="$(arg apply_cm_posture)"/>
+    <param name="publish_arm_posture_after_ready" value="false"/>
+    <param name="publish_base_after_ready" value="false"/>
+    <param name="publish_count" value="60"/>
+    <!-- 0.03 m에서는 10 cm lift가 7.5 cm 부근에서 ready가 될 수 있다.
+         운반 시작 전 실제 lift 높이를 1 cm 이내로 수렴시킨다. -->
+    <param name="z_tolerance" value="0.01"/>
+    <param name="metrics_timeout" value="0.50"/>
+  </node>
+
+  <node name="leader_hqp_controller"
+        pkg="kimm_phri_panda_husky" type="coop_husky_hqp_node" output="screen">
+    <param name="group_name" value="ns1"/>
+    <param name="initial_ctrl_mode" value="$(arg initial_ctrl_mode)"/>
+    <param name="rate" value="$(arg hqp_rate)"/>
+    <param name="arm_posture_target_topic" value="/leader/arm_posture_target"/>
+    <param name="elbow_z_target_topic" value="/leader/elbow_z_target"/>
+    <param name="enable_fext" value="$(arg leader_enable_fext)"/>
+    <param name="fext_source" value="$(arg fext_source)"/>
+    <param name="fext_comp_enabled" value="$(arg leader_enable_fext_comp)"/>
+    <param name="fext_comp_gain" value="$(arg fext_comp_gain)"/>
+    <param name="fext_timeout" value="$(arg fext_timeout)"/>
+    <param name="couple_stiffness" value="$(arg couple_stiffness)"/>
+    <param name="ee_force_sensor_name" value="leader_ee_force"/>
+    <param name="ee_torque_sensor_name" value="leader_ee_torque"/>
+    <param name="ee_position_sensor_name" value="leader_ee_grasp_position"/>
+    <param name="ee_quaternion_sensor_name" value="leader_ee_grasp_quaternion"/>
+    <rosparam param="couple_grasp_offset_xyz">[0.0, 0.85, 0.0]</rosparam>
+  </node>
+
+  <node name="follower_hqp_controller"
+        pkg="kimm_phri_panda_husky" type="coop_husky_hqp_node" output="screen">
+    <param name="group_name" value="ns0"/>
+    <param name="command_topic" value="/follower/joint_command"/>
+    <param name="ee_target_topic" value="/follower/ee_target"/>
+    <param name="base_target_topic" value="/follower/base_target"/>
+    <param name="ee_grasp_pose_topic" value="/follower/ee_grasp_pose"/>
+    <param name="link7_pose_topic" value="/follower/link7_pose"/>
+    <param name="elbow_pose_topic" value="/follower/elbow_pose"/>
+    <param name="qpos_offset" value="20"/>
+    <param name="qvel_offset" value="19"/>
+    <param name="initial_ctrl_mode" value="$(arg initial_ctrl_mode)"/>
+    <param name="rate" value="$(arg hqp_rate)"/>
+    <param name="arm_posture_target_topic" value="/follower/arm_posture_target"/>
+    <param name="elbow_z_target_topic" value="/follower/elbow_z_target"/>
+    <param name="enable_fext" value="$(arg follower_enable_fext)"/>
+    <param name="fext_source" value="$(arg fext_source)"/>
+    <param name="fext_comp_enabled" value="$(arg follower_enable_fext_comp)"/>
+    <param name="fext_comp_gain" value="$(arg fext_comp_gain)"/>
+    <param name="fext_timeout" value="$(arg fext_timeout)"/>
+    <param name="couple_stiffness" value="$(arg couple_stiffness)"/>
+    <param name="ee_force_sensor_name" value="follower_ee_force"/>
+    <param name="ee_torque_sensor_name" value="follower_ee_torque"/>
+    <param name="ee_position_sensor_name" value="follower_ee_grasp_position"/>
+    <param name="ee_quaternion_sensor_name" value="follower_ee_grasp_quaternion"/>
+    <rosparam param="couple_grasp_offset_xyz">[0.0, -0.85, 0.0]</rosparam>
+  </node>
+
+</launch>

@@ -1,0 +1,56 @@
+cm_seed:
+  label: lateral_nullspace_forward_facing_cm
+  role: 운반 시작 전 CM 기반 초기 자세 seed
+  query_scope: offline selected seed; 운반 중 event-based requery는 수행하지 않음
+  score_definition:
+    note: 선행연구의 mu-F-B 평가 틀을 협업 운반 문제에 맞게 재정의한 score
+    main_terms:
+      mu_norm: 팔 조작성
+      formation_score: leader/follower grasp 관계 유지
+      base_score: attach 위치 대비 base displacement penalty
+    diagnostic_terms:
+      joint_margin: 관절 한계 여유
+      torque_margin: torque 여유
+      lateral_y_q24_norm: y-방향 조작성
+      seed_shape_score: q1/q3 보상 형태
+  mode235_policy:
+    priority_0: [joint_bounds, wheel_bounds]
+    priority_1: [base_trajectory, ee_z_orientation_stability, posture_reference]
+    ee_mask: [0, 0, 1, 1, 1, 1]
+
+initial_state:
+  leader_base_xyyaw: [-6.98, 0.775, 0.0]
+  follower_base_xyyaw: [-6.98, -0.925, 0.0]
+  object_pose_wxyz: [-6.184632, -0.115685, 0.325, 1.0, 0.0, 0.0, 0.0]
+  q_initial_arm:
+    - -0.517767
+    - 0.465521
+    - 0.496745
+    - -2.161175
+    - -0.428746
+    - 1.865627
+    - -1.084738
+
+selected:
+  base_forward_offset: 0.85
+  leader_base_xyyaw: [-7.0584, 0.775, 0.0]
+  follower_base_xyyaw: [-7.0584, -0.925, 0.0]
+  target_z: 0.56
+  lift_delta: 0.10
+  q_sym:
+    - -0.689005
+    - 0.391861
+    - 0.792574
+    - -1.708306
+    - -0.388052
+    - 1.302821
+    - -1.177762
+  score: 0.524147995
+  mu_norm: 0.90106789
+  formation_score: 0.999602356
+  base_score: 0.730810967
+  joint_margin: 0.593496774
+  torque_margin: 0.631759029
+  lateral_y_q24_norm: 0.461330459
+  seed_shape_score: 0.562489291
+  selection_note: q3가 q1을 보상하면서 낮은 z와 lateral manipulability를 확보하는 forward-facing CM seed

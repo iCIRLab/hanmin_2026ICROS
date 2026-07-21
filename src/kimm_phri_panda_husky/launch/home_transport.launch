@@ -1,0 +1,28 @@
+<launch>
+  <!-- 올린 support 옆 pre-grasp에서 시작하여 mode 211로 lift를 요청한다.
+       제어기는 mode 1로 전환하지 않고, mode 200에서 동일한 home 관절 목표를 추종한다. -->
+  <arg name="start_keyboard" default="true"/>
+  <arg name="hqp_rate" default="500.0"/>
+  <arg name="fext_source" default="sensor"/>
+  <arg name="leader_enable_fext" default="false"/>
+  <arg name="follower_enable_fext" default="false"/>
+  <arg name="leader_enable_fext_comp" default="false"/>
+  <arg name="follower_enable_fext_comp" default="false"/>
+
+  <include file="$(find kimm_phri_panda_husky)/launch/cm_transport.launch">
+    <arg name="model_file"
+         value="$(find husky_description)/husky_coop/coop_transport_scene_straight_clean_home_baseline.xml"/>
+    <arg name="start_keyboard" value="$(arg start_keyboard)"/>
+    <arg name="hqp_rate" value="$(arg hqp_rate)"/>
+    <arg name="initial_ctrl_mode" value="200"/>
+    <arg name="attach_request_delay" value="0.0"/>
+    <arg name="apply_cm_posture" value="false"/>
+    <arg name="apply_cm_base" value="false"/>
+    <arg name="publish_lift_home_posture" value="true"/>
+    <arg name="fext_source" value="$(arg fext_source)"/>
+    <arg name="leader_enable_fext" value="$(arg leader_enable_fext)"/>
+    <arg name="follower_enable_fext" value="$(arg follower_enable_fext)"/>
+    <arg name="leader_enable_fext_comp" value="$(arg leader_enable_fext_comp)"/>
+    <arg name="follower_enable_fext_comp" value="$(arg follower_enable_fext_comp)"/>
+  </include>
+</launch>
