@@ -19,7 +19,7 @@
 
 [![포스터 미리보기](assets/poster/poster_preview.jpg)](assets/poster/학부연구생포스터_유한민.pdf)
 
-[![전체 시나리오 영상 미리보기](assets/video/video_preview.jpg)](assets/video/2026ICROS_학부연구생_유한민.mp4)
+[![전체 시나리오 영상 미리보기](assets/video/video_preview.jpg)](https://www.youtube.com/watch?v=ukqPhyuMfp4)
 
 ---
 
