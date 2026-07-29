@@ -1,4 +1,4 @@
-# Capability-Map-Based Initial Posture Seed Selection for Cooperative Transport with Differential-Drive Mobile Manipulators
+# Cooperative Transportation of Differential-Drive Mobile Manipulators Using Capability Map-Based Initial Posture Selection
 
 **English** · [한국어](README.ko.md)
 
