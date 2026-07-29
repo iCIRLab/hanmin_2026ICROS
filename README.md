@@ -15,11 +15,11 @@ A ROS 1 / MuJoCo simulation in which two Husky–Panda mobile manipulators coope
 | Material | Contents |
 |---|---|
 | [Undergraduate research poster (PDF)](assets/poster/학부연구생포스터_유한민.pdf) | Research background, Whole-Body HQP, CM seed selection and evaluation |
-| [Full scenario video](assets/video/2026ICROS_학부연구생_유한민.mp4) | Cooperative transport with the home baseline vs. the CM-applied posture |
+| [Full scenario video](https://www.youtube.com/watch?v=ukqPhyuMfp4) | Cooperative transport with the home baseline vs. the CM-applied posture |
 
 [![Poster preview](assets/poster/poster_preview.jpg)](assets/poster/학부연구생포스터_유한민.pdf)
 
-[![Full scenario video preview](assets/video/video_preview.jpg)](assets/video/2026ICROS_학부연구생_유한민.mp4)
+[![Full scenario video preview](assets/video/video_preview.jpg)](https://www.youtube.com/watch?v=ukqPhyuMfp4)
 
 ---
 
