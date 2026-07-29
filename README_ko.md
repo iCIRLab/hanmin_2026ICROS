@@ -1,4 +1,4 @@
-# Capability Map 기반 초기 자세 Seed 선택을 통한 차동구동 모바일 매니퓰레이터 협업 운반 제어
+# Capabiliy Map 기반 초기 자세 선택을 활용한 차동구동 모바일 매니퓰레이터의 협업 운반
 
 [English](README.md) · **한국어**
 
