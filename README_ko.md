@@ -54,7 +54,6 @@
 - **Offline Capability Map seed** — 운반 시작 자세를 조작성, grasp formation, base feasibility로 사전에 선택합니다.
 - **동일 조건 A/B 비교** — CM seed와 home 자세를 같은 물체, weld 강성, 센서, 0.10 m lift, mode 235 경로 조건에서 비교합니다.
 - **단일 통합 시뮬레이션** — 하나의 MuJoCo 상태를 로봇별로 분할하고, 두 개의 13축 명령을 약 500 Hz로 26축 command에 병합합니다.
-- **선택적 외력(Fext) 보상** — `sensor` 또는 `coupling` backend를 제공하며 기본값은 비활성입니다.
 
 ---
 
@@ -229,44 +228,13 @@ $$
 | `start_keyboard` | `true` | 키보드 인터페이스 실행 |
 | `attach_request_delay` | `1.0` | attach 요청 지연 [s] |
 
-### 6.2 Grasp backend
+### 6.2 Weld 체결 조건
 
-`c` 키의 weld attach는 **MuJoCo 시뮬레이션 시험용**이며 실제 gripper command를 대체하지 않습니다. 실제 물체 운반에서는 weld backend 대신 finger actuator와 실제 gripper command/action을 연결해야 합니다.
-
-각 로봇의 13축 command 중 11/12번 finger slot은 실제 gripper 경로를 위해 유지하며, weld 시험에서는 0으로 둡니다. 같은 이유로 좌/우 로봇 XML의 finger actuator와 EE force/torque sensor도 삭제하지 않습니다.
+`c` 키의 weld attach는 MuJoCo 시뮬레이션 시험용 파지입니다.
 
 초록색 `l_ee_grasp_site` / `r_ee_grasp_site`가 실제 시뮬레이션 파지 기준입니다. controller FK와 MuJoCo 모델 사이의 base 높이·frame 차이를 추정값으로 처리하지 않고, scene의 `framepos` / `framequat` 센서가 발행하는 실제 site pose를 EE target 보정과 진단에 사용합니다. weld `relpose`도 이 site와 물체 양 끝 파지 frame 사이의 비관통 자세에서 생성합니다.
 
 초기 weld 시 양쪽 base는 nominal seed보다 각각 5 mm 바깥쪽에 두어 총 10 mm의 측면 여유를 확보합니다. 관통은 EE/link7/elbow가 실제 object box 체적 안에 있는 경우만 판정하며 체결 시점에 반드시 0이어야 합니다. mode 235 운반 중에는 관통 진단을 기록하되 진입 실패 조건으로 사용하지 않습니다.
-
-### 6.3 Fext 하중 보상
-
-Fext는 grasp frame에 작용하는 6축 외력 `[Fx, Fy, Fz, Mx, My, Mz]`입니다. wrapper는 이를 $J^{T}F_{ext}$로 변환해 mode 235의 7축 arm torque 보상에 사용합니다.
-
-| Source | 설명 |
-|---|---|
-| `sensor` | MuJoCo 또는 실제 F/T sensor 사용. 실제 gripper 경로의 기본 후보 |
-| `coupling` | object-grasp와 EE 위치 오차를 spring force로 근사. weld 시뮬레이션 시험용 |
-
-기본값은 모든 Fext 보상이 **꺼진 상태**입니다. 예를 들어 follower sensor 보상을 켜려면 다음과 같이 실행합니다.
-
-```bash
-roslaunch kimm_phri_panda_husky cm_transport.launch \
-  follower_enable_fext:=true \
-  follower_enable_fext_comp:=true \
-  fext_source:=sensor
-```
-
-| 인자 | 기본값 | 설명 |
-|---|---|---|
-| `fext_source` | `sensor` | `sensor` 또는 `coupling` |
-| `leader_enable_fext` / `follower_enable_fext` | `false` | Fext 입력 구독 |
-| `leader_enable_fext_comp` / `follower_enable_fext_comp` | `false` | 보상 토크 적용 |
-| `fext_comp_gain` | `1.0` | 보상 gain |
-| `fext_timeout` | `0.25` | sample freshness timeout [s] |
-| `couple_stiffness` | `100.0` | `coupling` source의 spring 강성 |
-
-유효한 첫 sample이 들어오기 전이나 sample이 timeout되면 보상은 적용되지 않습니다. 힘/토크 부호와 gain은 실제 센서 장착 방향을 확인한 뒤 설정해야 합니다.
 
 ---
 
@@ -277,7 +245,6 @@ roslaunch kimm_phri_panda_husky cm_transport.launch \
 - 체결 시점 EE/link7/elbow 관통 0
 - lift 약 `+0.10 m`
 - mode 235 phase 0~5 완료, 양쪽 13축 command 약 500 Hz 발행, NaN/Inf 없음
-- Fext `sensor` + 보상 활성 시험에서 sensor topic 수신과 mode 235 유한 토크 출력 확인
 
 ---
 
@@ -285,7 +252,7 @@ roslaunch kimm_phri_panda_husky cm_transport.launch \
 
 - **시뮬레이션 전용입니다.** `c` 키의 weld attach는 MuJoCo 시험 경로이며 실제 gripper command를 대체하지 않고, 실로봇 bring-up은 이 저장소에 포함되지 않습니다.
 - **CM은 offline 초기 seed입니다.** 운반 중 local CM 재탐색은 포함하지 않습니다.
-- **비영(0이 아닌) Fext는 아직 검증되지 않았습니다.** 현재 equality-weld scene에서는 MuJoCo site force/torque가 0으로 관측되므로, sensor 경로의 수신·freshness·유한 토크 출력은 검증할 수 있지만 접촉 하중에서의 보상 크기와 부호는 실제 finger contact 모델이 필요합니다.
+- **외력(Fext) 보상은 사용하지 않았습니다.** 관련 코드와 launch 인자(`fext_*`)가 있으나 두 비교 시나리오 모두 기본값 `false`로 비활성이며, 동작은 검증되지 않았습니다.
 - **두 scene의 world 높이는 동일하지 않습니다.** CM `q_sym`과 원본 home이 도달하는 실제 그리퍼 높이가 달라 각 scene이 자체 물체·지지대 높이를 사용합니다. world 높이까지 맞추는 CM seed 재계산은 제어 조건 자체가 달라지므로 향후 과제로 둡니다.
 
 ---
