@@ -15,7 +15,7 @@
 | 자료 | 내용 |
 |---|---|
 | [학부연구생 포스터 PDF](assets/poster/학부연구생포스터_유한민.pdf) | 연구 배경, Whole-Body HQP, CM seed 선정 및 평가 |
-| [전체 시나리오 영상](assets/video/2026ICROS_학부연구생_유한민.mp4) | Home baseline과 CM 적용 협업 운반 비교 |
+| [전체 시나리오 영상](https://www.youtube.com/watch?v=ukqPhyuMfp4) | Home baseline과 CM 적용 협업 운반 비교 |
 
 [![포스터 미리보기](assets/poster/poster_preview.jpg)](assets/poster/학부연구생포스터_유한민.pdf)
 
